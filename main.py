@@ -1,87 +1,53 @@
 import streamlit as st
 import random
 
-# 🎨 페이지 기본 설정
-st.set_page_config(
-    page_title="가위✌️ 바위✊ 보✋ 게임",
-    page_icon="🎮",
-    layout="centered"
-)
+# 🎮 샘플 게임 데이터
+games_db = [
+    {"title": "The Witcher 3", "genre": "RPG", "platform": "PC", "style": "스토리 중심"},
+    {"title": "Elden Ring", "genre": "RPG", "platform": "Console", "style": "하드코어"},
+    {"title": "Hades", "genre": "액션", "platform": "PC", "style": "빠른 전투"},
+    {"title": "Stardew Valley", "genre": "시뮬레이션", "platform": "Mobile", "style": "힐링"},
+    {"title": "Overwatch 2", "genre": "FPS", "platform": "Console", "style": "멀티플레이"},
+    {"title": "Hollow Knight", "genre": "플랫폼", "platform": "PC", "style": "탐험 중심"},
+    {"title": "Genshin Impact", "genre": "RPG", "platform": "Mobile", "style": "스토리 중심"},
+    {"title": "Valorant", "genre": "FPS", "platform": "PC", "style": "멀티플레이"},
+    {"title": "Animal Crossing", "genre": "시뮬레이션", "platform": "Console", "style": "힐링"},
+]
 
-# 🥳 타이틀
-st.markdown(
-    """
-    <h1 style='text-align: center; color: #ff4b4b;'>🎮 가위✌️ 바위✊ 보✋ 게임에 오신 걸 환영합니다! 🎉</h1>
-    """,
-    unsafe_allow_html=True
-)
+# 🖼️ 페이지 설정
+st.set_page_config(page_title="🎮 게임 추천기", page_icon="🕹️", layout="centered")
 
-# 📢 설명
-st.markdown(
-    """
-    <h3 style='text-align: center;'>당신의 선택은? 🤔</h3>
-    <p style='text-align: center;'>컴퓨터와 한 판 붙어보세요! 누가 이길까요? 🔮</p>
-    """,
-    unsafe_allow_html=True
-)
+# 🌟 타이틀 영역
+st.markdown("""
+    <h1 style='text-align: center; color: #4CAF50;'>🎲 오늘 뭐하고 놀까? 게임 추천기 🎮</h1>
+    <p style='text-align: center;'>당신의 취향을 기반으로 최고의 게임을 추천해드려요! 💡</p>
+""", unsafe_allow_html=True)
 
-# 🎮 선택 옵션
-choices = {
-    "✌️ 가위": "scissors",
-    "✊ 바위": "rock",
-    "✋ 보": "paper"
-}
+# 🎯 사용자 선택 옵션
+genre = st.selectbox("🎮 선호 장르를 선택하세요:", ["RPG", "FPS", "시뮬레이션", "액션", "플랫폼"])
+platform = st.selectbox("🖥️ 주로 사용하는 플랫폼은?", ["PC", "Console", "Mobile"])
+style = st.selectbox("✨ 원하는 게임 스타일은?", ["스토리 중심", "하드코어", "힐링", "빠른 전투", "멀티플레이", "탐험 중심"])
 
-# 🧠 결과 판단 함수
-def get_result(user, computer):
-    if user == computer:
-        return "😐 비겼어요!"
-    elif (
-        (user == "rock" and computer == "scissors") or
-        (user == "scissors" and computer == "paper") or
-        (user == "paper" and computer == "rock")
-    ):
-        return "🎉 당신이 이겼어요! 👑"
-    else:
-        return "😭 당신이 졌어요..."
-
-# 🌟 컬러 박스로 구분
-st.markdown("---")
-st.subheader("👇 아래에서 하나를 선택하세요!")
-
-# 🎲 사용자 선택
-user_choice_emoji = st.radio("",
-    list(choices.keys()),
-    index=0,
-    horizontal=True,
-    label_visibility="collapsed"
-)
-
-user_choice = choices[user_choice_emoji]
-
-# 🕹️ 게임 실행 버튼
-if st.button("🎲 게임 시작!"):
-    computer_choice = random.choice(list(choices.values()))
-    result = get_result(user_choice, computer_choice)
-
-    # ✨ 애니메이션 느낌 출력
-    with st.spinner("컴퓨터가 고민 중... 🤔"):
-        st.sleep(1.5)
-
-    # 🎯 결과 출력
-    st.success(f"당신의 선택: {user_choice_emoji}")
+# 🔍 추천 버튼
+if st.button("🔍 게임 추천 받기"):
+    # 필터링
+    filtered_games = [game for game in games_db if game["genre"] == genre and game["platform"] == platform and game["style"] == style]
     
-    comp_choice_emoji = [k for k, v in choices.items() if v == computer_choice][0]
-    st.info(f"컴퓨터의 선택: {comp_choice_emoji}")
+    # 결과 표시
+    if filtered_games:
+        selected = random.choice(filtered_games)
+        st.success(f"🎉 추천 게임: **{selected['title']}**")
+        st.markdown(f"""
+        <div style="text-align: center; font-size: 1.2em; margin-top: 10px;">
+            ✅ 장르: {selected['genre']} <br>
+            💻 플랫폼: {selected['platform']} <br>
+            ✨ 스타일: {selected['style']} <br>
+        </div>
+        """, unsafe_allow_html=True)
+        st.balloons()
+    else:
+        st.error("😢 해당 조건에 맞는 게임을 찾을 수 없습니다. 조건을 바꿔보세요!")
 
-    st.markdown(
-        f"<h2 style='text-align: center; color: #33cc33;'>{result}</h2>",
-        unsafe_allow_html=True
-    )
-
-# 🎨 하단 푸터
+# 🎉 하단 푸터
 st.markdown("---")
-st.markdown(
-    "<p style='text-align: center;'>Made with ❤️ by Streamlit</p>",
-    unsafe_allow_html=True
-)
+st.markdown("<p style='text-align: center;'>Made with ❤️ by Streamlit</p>", unsafe_allow_html=True)
